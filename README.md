@@ -25,8 +25,8 @@ Control files store **critical metadata** about the Oracle database such as:
 
 You can multiplex control files using:
 
-1. **spfile**
-2. **pfile**
+1. **SPFILE**
+2. **PFILE**
 
 ---
 
@@ -43,11 +43,11 @@ sql> select name from v$controlfile;
 **Output:**
 
 ```
-/u01/oradata/oradb/control01.ctl  
-/u01/oradata/oradb/control02.ctl
+/u01/oradata/ORADB/control01.ctl  
+/u01/oradata/ORADB/control02.ctl
 ```
 
-Now we will add a **3rd control file** at `/u02/oradata/oradb/control03.ctl`.
+Now we will add a **3rd control file** at `/u02/oradata/ORADB/control03.ctl`.
 
 ---
 
@@ -57,9 +57,9 @@ Now we will add a **3rd control file** at `/u02/oradata/oradb/control03.ctl`.
 
 ```sql
 sql> alter system set control_files=
-'/u01/oradata/oradb/control01.ctl',
-'/u01/oradata/oradb/control02.ctl',
-'/u02/oradata/oradb/control03.ctl'
+'/u01/oradata/ORADB/control01.ctl',
+'/u01/oradata/ORADB/control02.ctl',
+'/u02/oradata/ORADB/control03.ctl'
 scope=spfile;
 ```
 
@@ -78,8 +78,8 @@ sql> shut immediate;
 > 🔍 **Check if directory doesn't exist, create it:**
 
 ```bash
-$ [ -d /u02/oradata/oradb ] || mkdir -p /u02/oradata/oradb
-$ cp /u01/oradata/oradb/control01.ctl /u02/oradata/oradb/control03.ctl
+$ mkdir -p /u02/oradata/ORADB
+$ cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
 ```
 
 ---
@@ -104,9 +104,9 @@ sql> select name from v$controlfile;
 **Expected Output:**
 
 ```
-/u01/oradata/oradb/control01.ctl  
-/u01/oradata/oradb/control02.ctl  
-/u02/oradata/oradb/control03.ctl
+/u01/oradata/ORADB/control01.ctl  
+/u01/oradata/ORADB/control02.ctl  
+/u02/oradata/ORADB/control03.ctl
 ```
 
 ---
@@ -125,15 +125,15 @@ sql> shut immediate;
 
 ```sql
 sql> alter system set control_files=
-'/u01/oradata/oradb/control01.ctl',
-'/u01/oradata/oradb/control02.ctl'
+'/u01/oradata/ORADB/control01.ctl',
+'/u01/oradata/ORADB/control02.ctl'
 scope=spfile;
 ```
 
 ### 🔹 Step 3: Delete 3rd Control File (Optional Cleanup)
 
 ```bash
-$ rm -f /u02/oradata/oradb/control03.ctl
+$ rm -f /u02/oradata/ORADB/control03.ctl
 ```
 
 ### 🔹 Step 4: Start Database
@@ -154,17 +154,17 @@ sql> shut immediate;
 
 ---
 
-### 🔹 Step 2: Edit pfile (`initoradb.ora`)
+### 🔹 Step 2: Edit pfile (`initORADB.ora`)
 
 ```bash
 $ cd $ORACLE_HOME/dbs
-$ vi initoradb.ora
+$ vi initORADB.ora
 ```
 
 Update this line:
 
 ```ini
-*.control_files='/u01/oradata/oradb/control01.ctl','/u01/oradata/oradb/control02.ctl','/u02/oradata/oradb/control03.ctl'
+*.control_files='/u01/oradata/ORADB/control01.ctl','/u01/oradata/ORADB/control02.ctl','/u02/oradata/ORADB/control03.ctl'
 ```
 
 Save and exit (`:wq!`)
@@ -176,8 +176,8 @@ Save and exit (`:wq!`)
 > 🔍 **Check if directory doesn't exist, create it:**
 
 ```bash
-$ mkdir -p /u02/oradata/oradb
-$ cp /u01/oradata/oradb/control01.ctl /u02/oradata/oradb/control03.ctl
+$ mkdir -p /u02/oradata/ORADB
+$ cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
 ```
 
 ---
@@ -186,7 +186,7 @@ $ cp /u01/oradata/oradb/control01.ctl /u02/oradata/oradb/control03.ctl
 
 ```bash
 $ sqlplus / as sysdba
-sql> startup pfile='$ORACLE_HOME/dbs/initoradb.ora';
+sql> startup pfile='$ORACLE_HOME/dbs/initORADB.ora';
 ```
 
 ---
