@@ -1,4 +1,4 @@
-## 🧩 **6. Control File Multiplexing**
+## 🧩 **Control File Multiplexing**
 
 ### 🎯 **Purpose**
 
