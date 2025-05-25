@@ -56,7 +56,7 @@ Because the process to multiplex control files differs based on whether you're u
 
 ---
 
-### 🔀 **Multiplexing Methods**
+## 🔀 **Multiplexing Methods**
 
 1. **SPFILE**
 2. **PFILE**
