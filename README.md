@@ -12,7 +12,7 @@ Control files store **critical metadata** about the Oracle database such as:
 
 ---
 
-## 🛡️ **Why Multiplex?**
+### 🛡️ **Why Multiplex?**
 
 * Protects against **single point of failure**
 * Enables **recovery** in case of disk corruption or accidental deletion
@@ -20,7 +20,7 @@ Control files store **critical metadata** about the Oracle database such as:
 
 ---
 
-## 🧠 **Current Setup**
+### 🧠 **Current Setup**
 
 Check existing control files:
 
@@ -43,7 +43,7 @@ We will now add a **third control file** at `/u02/oradata/ORADB/control03.ctl`.
 
 ---
 
-## 📌 **Before Starting: Check if SPFILE or PFILE is in Use**
+### 📌 **Before Starting: Check if SPFILE or PFILE is in Use**
 
 ```bash
 sqlplus / as sysdba
@@ -56,7 +56,7 @@ Because the process to multiplex control files differs based on whether you're u
 
 ---
 
-## 🔀 **Multiplexing Methods**
+### 🔀 **Multiplexing Methods**
 
 1. **SPFILE**
 2. **PFILE**
@@ -126,7 +126,7 @@ EXIT;
 
 ---
 
-## ❌ Revert SPFILE Before PFILE Practice
+### ❌ Revert SPFILE Before PFILE Practice
 
 If you want to test **pfile-based multiplexing**, first **remove** the 3rd control file from the spfile setup.
 
