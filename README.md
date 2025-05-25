@@ -29,7 +29,7 @@ sqlplus / as sysdba
 show parameter control_files;
 
 select name from v$controlfile;
-EXIT;
+exit;
 ```
 
 **Sample Output:**
@@ -48,7 +48,7 @@ We will now add a **third control file** at `/u02/oradata/ORADB/control03.ctl`.
 ```bash
 sqlplus / as sysdba
 show parameter spfile;
-EXIT;
+exit;
 ```
 
 💡 **Explanation**:
@@ -74,7 +74,7 @@ alter system set control_files=
 '/u01/oradata/ORADB/control02.ctl',
 '/u02/oradata/ORADB/control03.ctl'
 scope=spfile;
-EXIT;
+exit;
 ```
 
 💡 **Explanation**:
@@ -87,7 +87,7 @@ This updates the SPFILE with a new control file list. The change will apply on t
 ```bash
 sqlplus / as sysdba
 shutdown immediate;
-EXIT;
+exit;
 ```
 
 ---
@@ -109,7 +109,7 @@ All control files must have identical content. We're copying a valid control fil
 ```bash
 sqlplus / as sysdba
 startup;
-EXIT;
+exit;
 ```
 
 ---
@@ -121,7 +121,7 @@ sqlplus / as sysdba
 show parameter control_files;
 
 select name from v$controlfile;
-EXIT;
+exit;
 ```
 
 ---
@@ -135,7 +135,7 @@ If you want to test **pfile-based multiplexing**, first **remove** the 3rd contr
 ```bash
 sqlplus / as sysdba
 shutdown immediate;
-EXIT;
+exit;
 ```
 
 ---
@@ -148,7 +148,7 @@ alter system set control_files=
 '/u01/oradata/ORADB/control01.ctl',
 '/u01/oradata/ORADB/control02.ctl'
 scope=spfile;
-EXIT;
+exit;
 ```
 
 ---
@@ -166,7 +166,7 @@ rm -f /u02/oradata/ORADB/control03.ctl
 ```bash
 sqlplus / as sysdba
 startup;
-EXIT;
+exit;
 ```
 
 ---
@@ -184,7 +184,6 @@ EXIT;
 ```bash
 sqlplus / as sysdba
 create pfile from spfile;
-EXIT;
 ```
 
 💡 **Explanation**:
@@ -192,7 +191,15 @@ This generates a text-based init file (`initORADB.ora`) that captures the curren
 
 ---
 
-### 🔹 Step 2: Rename or Move SPFILE
+### 🔹 Step 2: Shut Down the Database (If Not Already)
+
+```bash
+shutdown immediate;
+exit;
+```
+---
+
+### 🔹 Step 3: Rename or Move SPFILE
 
 ```bash
 cd $ORACLE_HOME/dbs
@@ -201,16 +208,6 @@ mv spfileORADB.ora spfileORADB.ora_bkp
 
 💡 **Explanation**:
 Oracle will use the PFILE on next startup only if the SPFILE is not found.
-
----
-
-### 🔹 Step 3: Shut Down the Database (If Not Already)
-
-```bash
-sqlplus / as sysdba
-shutdown immediate;
-EXIT;
-```
 
 ---
 
@@ -248,7 +245,7 @@ New file is created by cloning an existing valid control file.
 ```bash
 sqlplus / as sysdba
 startup pfile='$ORACLE_HOME/dbs/initORADB.ora';
-EXIT;
+exit;
 ```
 
 ---
@@ -260,7 +257,7 @@ sqlplus / as sysdba
 show parameter control_files;
 
 select name from v$controlfile;
-EXIT;
+exit;
 ```
 
 ---
