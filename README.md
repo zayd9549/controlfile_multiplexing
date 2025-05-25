@@ -24,10 +24,12 @@ Control files store **critical metadata** about the Oracle database such as:
 
 Check existing control files:
 
-```sql
-sql> show parameter control_files;
+```bash
+sqlplus / as sysdba
+show parameter control_files;
 
-sql> select name from v$controlfile;
+select name from v$controlfile;
+EXIT;
 ```
 
 **Sample Output:**
@@ -41,19 +43,13 @@ We will now add a **third control file** at `/u02/oradata/ORADB/control03.ctl`.
 
 ---
 
-### 📌 **Before Starting: Check if SPFILE or PFILE is in Use**
+## 📌 **Before Starting: Check if SPFILE or PFILE is in Use**
 
-```sql
-sql> show parameter spfile;
+```bash
+sqlplus / as sysdba
+show parameter spfile;
+EXIT;
 ```
-
-**Output Examples:**
-
-* If using **SPFILE**:
-  `/u01/app/oracle/product/19.0.0/dbhome_1/dbs/spfileORADB.ora`
-
-* If using **PFILE**:
-  The result will be **blank** (no spfile in use).
 
 💡 **Explanation**:
 Because the process to multiplex control files differs based on whether you're using SPFILE or PFILE.
@@ -71,12 +67,14 @@ Because the process to multiplex control files differs based on whether you're u
 
 ### 🔹 Step 1: Update Control Files Parameter in SPFILE
 
-```sql
-sql> alter system set control_files=
+```bash
+sqlplus / as sysdba
+alter system set control_files=
 '/u01/oradata/ORADB/control01.ctl',
 '/u01/oradata/ORADB/control02.ctl',
 '/u02/oradata/ORADB/control03.ctl'
 scope=spfile;
+EXIT;
 ```
 
 💡 **Explanation**:
@@ -86,8 +84,10 @@ This updates the SPFILE with a new control file list. The change will apply on t
 
 ### 🔹 Step 2: Shut Down the Database
 
-```sql
-sql> shut immediate;
+```bash
+sqlplus / as sysdba
+shutdown immediate;
+EXIT;
 ```
 
 ---
@@ -95,8 +95,8 @@ sql> shut immediate;
 ### 🔹 Step 3: Copy Control File to New Location
 
 ```bash
-$ mkdir -p /u02/oradata/ORADB
-$ cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
+mkdir -p /u02/oradata/ORADB
+cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
 ```
 
 💡 **Explanation**:
@@ -107,25 +107,21 @@ All control files must have identical content. We're copying a valid control fil
 ### 🔹 Step 4: Start the Database
 
 ```bash
-$ sqlplus / as sysdba
-sql> startup;
+sqlplus / as sysdba
+startup;
+EXIT;
 ```
 
 ---
 
 ### 🔹 Step 5: Confirm All 3 Control Files Are Active
 
-```sql
-sql> show parameter control_files;
-sql> select name from v$controlfile;
-```
+```bash
+sqlplus / as sysdba
+show parameter control_files;
 
-Expected Output:
-
-```
-/u01/oradata/ORADB/control01.ctl  
-/u01/oradata/ORADB/control02.ctl  
-/u02/oradata/ORADB/control03.ctl
+select name from v$controlfile;
+EXIT;
 ```
 
 ---
@@ -136,19 +132,23 @@ If you want to test **pfile-based multiplexing**, first **remove** the 3rd contr
 
 ### 🔹 Step 1: Shut Down Database
 
-```sql
-sql> shut immediate;
+```bash
+sqlplus / as sysdba
+shutdown immediate;
+EXIT;
 ```
 
 ---
 
 ### 🔹 Step 2: Revert Control Files List
 
-```sql
-sql> alter system set control_files=
+```bash
+sqlplus / as sysdba
+alter system set control_files=
 '/u01/oradata/ORADB/control01.ctl',
 '/u01/oradata/ORADB/control02.ctl'
 scope=spfile;
+EXIT;
 ```
 
 ---
@@ -156,15 +156,17 @@ scope=spfile;
 ### 🔹 Step 3: Delete 3rd Control File
 
 ```bash
-$ rm -f /u02/oradata/ORADB/control03.ctl
+rm -f /u02/oradata/ORADB/control03.ctl
 ```
 
 ---
 
 ### 🔹 Step 4: Start Database
 
-```sql
-sql> startup;
+```bash
+sqlplus / as sysdba
+startup;
+EXIT;
 ```
 
 ---
@@ -179,8 +181,10 @@ sql> startup;
 
 ### 🔹 Step 1: Create PFILE from SPFILE
 
-```sql
-sql> create pfile from spfile;
+```bash
+sqlplus / as sysdba
+create pfile from spfile;
+EXIT;
 ```
 
 💡 **Explanation**:
@@ -191,8 +195,8 @@ This generates a text-based init file (`initORADB.ora`) that captures the curren
 ### 🔹 Step 2: Rename or Move SPFILE
 
 ```bash
-$ cd $ORACLE_HOME/dbs
-$ mv spfileORADB.ora spfileORADB.ora_bkp
+cd $ORACLE_HOME/dbs
+mv spfileORADB.ora spfileORADB.ora_bkp
 ```
 
 💡 **Explanation**:
@@ -202,8 +206,10 @@ Oracle will use the PFILE on next startup only if the SPFILE is not found.
 
 ### 🔹 Step 3: Shut Down the Database (If Not Already)
 
-```sql
-sql> shut immediate;
+```bash
+sqlplus / as sysdba
+shutdown immediate;
+EXIT;
 ```
 
 ---
@@ -211,7 +217,7 @@ sql> shut immediate;
 ### 🔹 Step 4: Edit PFILE (`initORADB.ora`)
 
 ```bash
-$ vi $ORACLE_HOME/dbs/initORADB.ora
+vi $ORACLE_HOME/dbs/initORADB.ora
 ```
 
 Update the control\_files parameter:
@@ -228,8 +234,8 @@ You're manually specifying the third control file location in the parameter file
 ### 🔹 Step 5: Copy Control File to New Location
 
 ```bash
-$ mkdir -p /u02/oradata/ORADB
-$ cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
+mkdir -p /u02/oradata/ORADB
+cp /u01/oradata/ORADB/control01.ctl /u02/oradata/ORADB/control03.ctl
 ```
 
 💡 **Explanation**:
@@ -240,25 +246,21 @@ New file is created by cloning an existing valid control file.
 ### 🔹 Step 6: Start Database with PFILE
 
 ```bash
-$ sqlplus / as sysdba
-sql> startup pfile='$ORACLE_HOME/dbs/initORADB.ora';
+sqlplus / as sysdba
+startup pfile='$ORACLE_HOME/dbs/initORADB.ora';
+EXIT;
 ```
 
 ---
 
 ### 🔹 Step 7: Confirm All 3 Control Files Are Active
 
-```sql
-sql> show parameter control_files;
-sql> select name from v$controlfile;
-```
+```bash
+sqlplus / as sysdba
+show parameter control_files;
 
-Expected Output:
-
-```
-/u01/oradata/ORADB/control01.ctl  
-/u01/oradata/ORADB/control02.ctl  
-/u02/oradata/ORADB/control03.ctl
+select name from v$controlfile;
+EXIT;
 ```
 
 ---
